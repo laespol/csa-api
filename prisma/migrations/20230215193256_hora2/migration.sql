@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `hora` MODIFY `chapa` VARCHAR(8) NOT NULL DEFAULT '00000000';

@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `requisicao` ADD COLUMN `outros` VARCHAR(200) NULL DEFAULT '',
+    ADD COLUMN `prazo` VARCHAR(200) NULL DEFAULT '',
+    ADD COLUMN `vigencia` VARCHAR(200) NULL DEFAULT '';

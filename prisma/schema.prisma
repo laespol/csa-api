@@ -1,0 +1,694 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  idusuario       Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(100)
+  email           String    @db.VarChar(100)
+  cpf             String?   @db.VarChar(50)
+  dtnascimento    DateTime? @db.Date
+  sexo            String?   @db.VarChar(1)
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  senha           String
+  trocasenha      Boolean   @default(true)
+  iddepartamento  Int
+  idmenu          Int       @default(1)
+  celular         String?   @db.VarChar(20)
+  ramaln          String?   @db.VarChar(20)
+  idnivel         Int       @default(1)
+  nivel           Nivel     @relation(fields: [idnivel], references: [idnivel])
+  chatid          String?   @default("0")
+  ti              Boolean   @default(false)
+  contrato        Boolean   @default(false)
+  contratost      Boolean   @default(false)
+  menu            Menu      @relation(fields: [idmenu], references: [idmenu])
+  idunidade       Int       @default(1)
+  unidade         Unidade   @relation(fields: [idunidade], references: [idunidade])
+  vtodoscontratos Boolean   @default(false)
+  vtodoshoraextra Boolean   @default(false)
+  ccontratos      Boolean   @default(false)
+  choraextra      Boolean   @default(false)
+
+  Aluno         Aluno[]
+  Histaluno     Histaluno[]
+  Anoletivo     Anoletivo[]
+  Serie         Serie[]
+  Alunoserie    Alunoserie[]
+  Materiaserie  Materiaserie[]
+  Notas         Notas[]
+  Imovel        Imovel[]
+  Contrato      Contrato[]
+  Documento     Documento[]
+  Histmov       Histmov[]
+  Custo         Custo[]
+  Hora          Hora[]
+  Geradospdf    Geradospdf[]
+  Funcionario   Funcionario[]
+  Unidadegestor Unidadegestor[]
+  Pasta         Pasta[]
+  Tphora        Tphora[]
+  Requisicao    Requisicao[]
+  Solicitacao   Solicitacao[]
+  Tpsolicitacao Tpsolicitacao[]
+  Documentosol  Documentosol[]
+
+  @@index([email])
+  @@index([iddepartamento], map: "usuario_iddepartamento_fkey")
+  @@index([idmenu], map: "usuario_idmenu_fkey")
+  @@index([idnivel], map: "usuario_idnivel_fkey")
+  @@map("usuario")
+}
+
+model Nivel {
+  idnivel         Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(50)
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  Usuario         Usuario[]
+
+  @@map("nivel")
+}
+
+model Login {
+  idlogin   Int      @id @default(autoincrement())
+  email     String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @ignore
+  status    String   @default("A") @db.VarChar(1)
+  respsend  Int
+  iporigem  String   @db.VarChar(20)
+
+  @@map("login")
+}
+
+model Sendmail {
+  idsendmail            Int       @id @default(autoincrement())
+  destinatario          String    @db.VarChar(1000)
+  html                  Bytes
+  subject               String    @db.VarChar(200)
+  idusercreateAt        Int
+  createdAt             DateTime  @default(now())
+  iduserupdatedAt       Int?
+  updatedAt             DateTime? @updatedAt
+  status                String    @default("A") @db.VarChar(1)
+  idsolicitante         Int?
+  idusuarioaprovacao    Int?
+  idusuariocotacao      Int?
+  idusuarioaprovacaodir Int?
+  idusuariocompra       Int?
+  idusuarioentrega      Int?
+  idcompra              Int?
+
+  @@map("sendmail")
+}
+
+model Menu {
+  idmenu          Int        @id @default(autoincrement())
+  idusercreateAt  Int
+  createdAt       DateTime   @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?  @updatedAt
+  status          String     @default("A") @db.VarChar(1)
+  nome            String     @db.VarChar(30)
+  Menuitem        Menuitem[]
+  Usuario         Usuario[]
+
+  @@map("menu")
+}
+
+model Menuitem {
+  idmenuitem      Int       @id @default(autoincrement())
+  idmenu          Int
+  seq             Int
+  titulo          String    @db.VarChar(30)
+  url             String    @db.VarChar(200)
+  icon            String    @db.VarChar(30)
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  menu            Menu      @relation(fields: [idmenu], references: [idmenu])
+
+  @@index([idmenu], map: "menuitem_idmenu_fkey")
+  @@map("menuitem")
+}
+
+model Telegram {
+  chatid     String
+  email      String? @db.VarChar(100)
+  senha      String?
+  quantidade Int?    @default(1)
+  messageid  Int     @default(0)
+  idtelegram Int     @id @default(autoincrement())
+
+  @@map("telegram")
+}
+
+model Coluna {
+  idcoluna        Int       @id @default(autoincrement())
+  programa        String    @db.VarChar(50)
+  field           String
+  header          String
+  style           String
+  type            String
+  agregado1       String?
+  agregado2       String?
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  ordem           Int       @default(0)
+  ordena          String    @default("true")
+  filtra          Boolean   @default(false)
+
+  Usuariocoluna Usuariocoluna[]
+
+  @@map("coluna")
+}
+
+model Usuariocoluna {
+  idusuariocoluna Int       @id @default(autoincrement())
+  idcoluna        Int       @default(0)
+  coluna          Coluna    @relation(fields: [idcoluna], references: [idcoluna])
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  idusuario       Int
+
+  @@map("usuariocoluna")
+}
+
+model Aluno {
+  idaluno         Int          @id @default(autoincrement())
+  ra              Int          @unique
+  nome            String       @db.VarChar(100)
+  respfinanceiro  Int          @default(8)
+  resppedagogico  Int          @default(8)
+  idusercreateAt  Int
+  usuario         Usuario      @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime     @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?    @updatedAt
+  status          String       @default("A") @db.VarChar(1)
+  Histaluno       Histaluno[]
+  Alunoserie      Alunoserie[]
+  Notas           Notas[]
+
+  @@map("aluno")
+}
+
+model Histaluno {
+  idhistaluno          Int        @id @default(autoincrement())
+  idalunoserie         Int
+  alunoserie           Alunoserie @relation(fields: [idalunoserie], references: [idalunoserie])
+  nome                 String     @db.VarChar(600)
+  idusercreateAt       Int
+  usuario              Usuario    @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt            DateTime   @default(now())
+  iduserupdatedAt      Int?
+  updatedAt            DateTime?  @updatedAt
+  status               String     @default("A") @db.VarChar(1)
+  aluno                Aluno?     @relation(fields: [alunoIdaluno], references: [idaluno])
+  alunoIdaluno         Int?
+  anoletivo            Anoletivo? @relation(fields: [anoletivoIdanoletivo], references: [idanoletivo])
+  anoletivoIdanoletivo Int?
+  serie                Serie?     @relation(fields: [serieIdserie], references: [idserie])
+  serieIdserie         Int?
+  statuscompra         String     @default("A") @db.VarChar(1)
+  posicao              Posicao    @relation(fields: [statuscompra], references: [statuscompra])
+
+  @@map("histaluno")
+}
+
+model Anoletivo {
+  idanoletivo     Int            @id @default(autoincrement())
+  nome            String         @db.VarChar(600)
+  idusercreateAt  Int
+  usuario         Usuario        @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime       @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?      @updatedAt
+  status          String         @default("A") @db.VarChar(1)
+  Histaluno       Histaluno[]
+  Alunoserie      Alunoserie[]
+  Materiaserie    Materiaserie[]
+
+  @@map("anoletivo")
+}
+
+model Serie {
+  idserie         Int            @id @default(autoincrement())
+  nome            String         @db.VarChar(600)
+  idusercreateAt  Int
+  usuario         Usuario        @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime       @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?      @updatedAt
+  status          String         @default("A") @db.VarChar(1)
+  Histaluno       Histaluno[]
+  Alunoserie      Alunoserie[]
+  Materiaserie    Materiaserie[]
+
+  @@map("serie")
+}
+
+model Alunoserie {
+  idalunoserie    Int       @id @default(autoincrement())
+  idanoletivo     Int
+  anoletivo       Anoletivo @relation(fields: [idanoletivo], references: [idanoletivo])
+  idserie         Int
+  serie           Serie     @relation(fields: [idserie], references: [idserie])
+  idaluno         Int
+  aluno           Aluno     @relation(fields: [idaluno], references: [idaluno])
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  statuscompra    String    @default("A") @db.VarChar(1)
+  posicao         Posicao   @relation(fields: [statuscompra], references: [statuscompra])
+
+  Histaluno Histaluno[]
+
+  @@map("alunoserie")
+}
+
+model Posicao {
+  statuscompra    String    @unique @db.VarChar(1)
+  nome            String    @db.VarChar(30)
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  Histaluno  Histaluno[]
+  Alunoserie Alunoserie[]
+
+  @@map("posicao")
+}
+
+model Materia {
+  idmateria       Int            @id @default(autoincrement())
+  nome            String         @db.VarChar(50)
+  idusercreateAt  Int
+  createdAt       DateTime       @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?      @updatedAt
+  status          String         @default("A") @db.VarChar(1)
+  Materiaserie    Materiaserie[]
+
+  @@map("materia")
+}
+
+model Materiaserie {
+  idmateriaserie  Int       @id @default(autoincrement())
+  idanoletivo     Int
+  anoletivo       Anoletivo @relation(fields: [idanoletivo], references: [idanoletivo])
+  idserie         Int
+  serie           Serie     @relation(fields: [idserie], references: [idserie])
+  idmateria       Int
+  materia         Materia   @relation(fields: [idmateria], references: [idmateria])
+  idprofessor     Int       @default(0)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  Notas           Notas[]
+
+  @@map("materiaserie")
+}
+
+model Notas {
+  idnota          Int          @id @default(autoincrement())
+  idmateriaserie  Int
+  materiaserie    Materiaserie @relation(fields: [idmateriaserie], references: [idmateriaserie])
+  idaluno         Int
+  aluno           Aluno        @relation(fields: [idaluno], references: [idaluno])
+  nota            Decimal      @default(00.00)
+  idusercreateAt  Int
+  usuario         Usuario      @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime     @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?    @updatedAt
+  status          String       @default("A") @db.VarChar(1)
+
+  @@map("notas")
+}
+
+model Imovel {
+  idimovel        Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(50)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  Custo           Custo[]
+  Unidade         Unidade[]
+
+  @@map("imovel")
+}
+
+model Unidade {
+  idunidade       Int             @id @default(autoincrement())
+  nome            String          @db.VarChar(30)
+  idusercreateAt  Int
+  createdAt       DateTime        @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?       @updatedAt
+  status          String          @default("A") @db.VarChar(1)
+  idimovel        Int             @default(5)
+  imovel          Imovel          @relation(fields: [idimovel], references: [idimovel])
+  centrocusto     String          @db.VarChar(20)
+  administrativo  Boolean         @default(false)
+  imagem1         Bytes?
+  imagem2         Bytes?
+  Contrato        Contrato[]
+  Usuario         Usuario[]
+  Unidadegestor   Unidadegestor[]
+  Hora            Hora[]
+  Pasta           Pasta[]
+  Requisicao      Requisicao[]
+
+  @@map("unidade")
+}
+
+model Contrato {
+  idcontrato      Int         @id @default(autoincrement())
+  razaosocial     String      @db.VarChar(90)
+  cnpj            String?     @db.VarChar(30)
+  descricao       String      @db.VarChar(2000)
+  dtviginicio     DateTime?
+  dtvigfinal      DateTime?
+  idunidade       Int
+  unidade         Unidade     @relation(fields: [idunidade], references: [idunidade])
+  correcao        String      @db.VarChar(10)
+  valorproposta   Decimal?    @default(0.00000)
+  localizacao     String      @db.VarChar(60)
+  idusercreateAt  Int
+  usuario         Usuario     @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime    @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?   @updatedAt
+  status          String      @default("A") @db.VarChar(1)
+  consulta        String      @db.VarChar(5000)
+  statuscontrato  String      @default("A") @db.VarChar(1)
+  aditivo         Boolean?    @default(false)
+  dtasscont       DateTime?
+  dtrecdoc        DateTime?
+  aprovado        Boolean?    @default(false)
+  periodo         String      @db.VarChar(20)
+  Documento       Documento[]
+  Histmov         Histmov[]
+  custo           Custo       @relation(fields: [idcusto], references: [idcusto])
+  idcusto         Int
+  renovauto       Boolean?    @default(false)
+  tipopagamento   String?     @default("") @db.VarChar(10)
+  numeroparcelas  Int?        @default(0)
+
+  @@fulltext([consulta])
+  @@map("contrato")
+}
+
+model Documento {
+  iddocumento     Int       @id @default(autoincrement())
+  idcontrato      Int
+  contrato        Contrato  @relation(fields: [idcontrato], references: [idcontrato])
+  documentopdf    Bytes?
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  nome            String    @db.VarChar(255)
+  mimetype        String    @db.VarChar(255)
+  encoding        String    @db.VarChar(255)
+  size            Int
+
+  @@map("documento")
+}
+
+model Histmov {
+  idhistmov       Int       @id @default(autoincrement())
+  idusuario       Int
+  usuario         Usuario   @relation(fields: [idusuario], references: [idusuario])
+  idcontrato      Int
+  contrato        Contrato  @relation(fields: [idcontrato], references: [idcontrato])
+  dtretirada      DateTime  @default(now())
+  dtdevolucao     DateTime?
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  @@map("histmov")
+}
+
+model Custo {
+  idcusto         Int          @id @default(autoincrement())
+  idimovel        Int
+  imovel          Imovel       @relation(fields: [idimovel], references: [idimovel])
+  nome            String       @db.VarChar(40)
+  idusercreateAt  Int
+  usuario         Usuario      @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime     @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?    @updatedAt
+  status          String       @default("A") @db.VarChar(1)
+  Contrato        Contrato[]
+  Requisicao      Requisicao[]
+
+  @@map("custo")
+}
+
+model Hora {
+  idhora          Int       @id @default(autoincrement())
+  funcionario     String    @db.VarChar(60)
+  datainicio      DateTime
+  datafinal       DateTime
+  motivo          String    @db.VarChar(2000)
+  qthoras         Int       @default(0)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  consulta        String    @db.VarChar(3000)
+  chapa           String    @default("00000000") @db.VarChar(8)
+  departamento    String    @db.VarChar(100)
+  centrocusto     String    @db.VarChar(20)
+  idunidade       Int
+  unidade         Unidade   @relation(fields: [idunidade], references: [idunidade])
+  idtphora        Int
+  tphora          Tphora    @relation(fields: [idtphora], references: [idtphora])
+  dtcompini       DateTime?
+  dtcompfim       DateTime?
+  hrcomp          Int?
+
+  @@fulltext([consulta])
+  @@map("hora")
+}
+
+model Geradospdf {
+  idgeradospdf    Int       @id @default(autoincrement())
+  programa        String    @db.VarChar(50)
+  codigo          Bytes?
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  @@unique([programa])
+  @@map("geradospdf")
+}
+
+model Funcionario {
+  idfuncionario   Int       @id @default(autoincrement())
+  chapa           String
+  nome            String    @db.VarChar(100)
+  departamento    String    @db.VarChar(100)
+  centrocusto     String    @db.VarChar(20)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  @@unique([chapa])
+  @@map("funcionario")
+}
+
+model Unidadegestor {
+  idunidadegestor Int       @id @default(autoincrement())
+  idunidade       Int
+  unidade         Unidade   @relation(fields: [idunidade], references: [idunidade])
+  idusuario       Int
+  usuario         Usuario   @relation(fields: [idusuario], references: [idusuario])
+  idusercreateAt  Int
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  @@unique([idunidade, idusuario])
+  @@map("unidadegestor")
+}
+
+model Pasta {
+  idpasta         Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(100)
+  dtentrega       DateTime?
+  dtvigencia      DateTime?
+  iduserrec       Int
+  tempoguarda     Int
+  idunidade       Int
+  unidade         Unidade   @relation(fields: [idunidade], references: [idunidade])
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+
+  @@map("pasta")
+}
+
+model Tphora {
+  idtphora        Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(100)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  Hora            Hora[]
+
+  @@map("tphora")
+}
+
+model Requisicao {
+  idrequisicao     Int       @id @default(autoincrement())
+  descricao        String    @db.VarChar(2000)
+  justificativa    String    @db.VarChar(2000)
+  idunidade        Int
+  unidade          Unidade   @relation(fields: [idunidade], references: [idunidade])
+  correcao         String    @db.VarChar(10)
+  valorproposta    Decimal?  @default(0.00000)
+  idusercreateAt   Int
+  usuario          Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt        DateTime  @default(now())
+  iduserupdatedAt  Int?
+  updatedAt        DateTime? @updatedAt
+  status           String    @default("A") @db.VarChar(1)
+  consulta         String    @db.VarChar(5000)
+  statusrequisicao String    @default("A") @db.VarChar(1)
+  aditivo          Boolean?  @default(false)
+  aprovado         Boolean?  @default(false)
+  periodo          Int?
+  custo            Custo     @relation(fields: [idcusto], references: [idcusto])
+  idcusto          Int
+  renovauto        Boolean?  @default(false)
+  tipopagamento    String?   @default("") @db.VarChar(10)
+  numeroparcelas   Int?      @default(0)
+  vigencia         String?   @default("") @db.VarChar(200)
+  outros           String?   @default("") @db.VarChar(200)
+  prazo            String?   @default("") @db.VarChar(200)
+
+  @@fulltext([consulta])
+  @@map("requisicao")
+}
+
+model Solicitacao {
+  idsolicitacao     Int            @id @default(autoincrement())
+  descricao         String         @db.VarChar(3000)
+  resposta          String?        @db.VarChar(3000)
+  email             String?        @db.VarChar(60)
+  nome              String?        @db.VarChar(60)
+  telefone          String?        @db.VarChar(20)
+  sigilo            Int?           @default(0)
+  idusercreateAt    Int
+  usuario           Usuario        @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt         DateTime       @default(now())
+  iduserupdatedAt   Int?
+  updatedAt         DateTime?      @updatedAt
+  status            String         @default("A") @db.VarChar(1)
+  consulta          String         @db.VarChar(9000)
+  statussolicitacao String?        @default("A") @db.VarChar(1)
+  idtpsolicitacao   Int?
+  tpsolicitacao     Tpsolicitacao? @relation(fields: [idtpsolicitacao], references: [idtpsolicitacao])
+  Documentosol      Documentosol[]
+
+  @@fulltext([consulta])
+  @@map("solicitacao")
+}
+
+model Tpsolicitacao {
+  idtpsolicitacao Int           @id @default(autoincrement())
+  descricao       String        @db.VarChar(100)
+  idusercreateAt  Int
+  usuario         Usuario       @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime      @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?     @updatedAt
+  status          String        @default("A") @db.VarChar(1)
+  Solicitacao     Solicitacao[]
+
+  @@map("tpsolicitacao")
+}
+
+model Documentosol {
+  iddocumentosol  Int         @id @default(autoincrement())
+  idsolicitacao   Int
+  solicitacao     Solicitacao @relation(fields: [idsolicitacao], references: [idsolicitacao])
+  documentopdf    Bytes?
+  idusercreateAt  Int
+  usuario         Usuario     @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime    @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime?   @updatedAt
+  status          String      @default("A") @db.VarChar(1)
+  nome            String      @db.VarChar(255)
+  mimetype        String      @db.VarChar(255)
+  encoding        String      @db.VarChar(255)
+  size            Int
+
+  @@map("documentosol")
+}
+
+model Cep {
+  idcep      String @id @db.VarChar(8)
+  cidade     String @db.VarChar(255)
+  bairro     String @db.VarChar(255)
+  logradouro String @db.VarChar(255)
+
+  @@map("cep")
+}

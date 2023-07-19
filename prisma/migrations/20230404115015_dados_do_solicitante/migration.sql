@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `solicitacao` ADD COLUMN `nome` VARCHAR(60) NULL,
+    ADD COLUMN `sigilo` INTEGER NULL DEFAULT 0,
+    ADD COLUMN `telefone` VARCHAR(20) NULL,
+    MODIFY `email` VARCHAR(60) NULL;
