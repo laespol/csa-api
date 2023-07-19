@@ -45,6 +45,7 @@ exports.getAlunoserie = async (req, res, next) => {
             }
 
         })
+
         await prisma.$disconnect()
         const response = {
             ok: true,
@@ -60,6 +61,10 @@ exports.getAlunoserie = async (req, res, next) => {
             error: error
         });
     }
+};
+
+exports.postTeste = async() => {
+
 };
 
 exports.postAlunoserie = async (req, res, next) => {
