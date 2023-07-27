@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 
 
 const usuarioV1Route = require('./routes/usuario-V1-route');
+const visitaV1Route = require('./routes/visita-V1-route');
 const alunoV1Route = require('./routes/aluno-V1-route');
 const serieV1Route = require('./routes/serie-V1-route');
 const anoletivoV1Route = require('./routes/anoletivo-V1-route');
@@ -58,6 +59,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/v1/usuario', usuarioV1Route);
+app.use('/v1/visita', visitaV1Route);
 app.use('/v1/aluno', alunoV1Route);
 app.use('/v1/serie', serieV1Route);
 app.use('/v1/anoletivo', anoletivoV1Route);

@@ -62,6 +62,7 @@ model Usuario {
   Solicitacao   Solicitacao[]
   Tpsolicitacao Tpsolicitacao[]
   Documentosol  Documentosol[]
+  Visita        Visita[]
 
   @@index([email])
   @@index([iddepartamento], map: "usuario_iddepartamento_fkey")
@@ -691,4 +692,23 @@ model Cep {
   logradouro String @db.VarChar(255)
 
   @@map("cep")
+}
+
+model Visita {
+  idvisita        Int       @id @default(autoincrement())
+  descricao       String    @db.VarChar(3000)
+  email           String?   @db.VarChar(120)
+  nome            String?   @db.VarChar(120)
+  telefone        String?   @db.VarChar(20)
+  empresa         String?   @db.VarChar(120)
+  idusercreateAt  Int
+  usuario         Usuario   @relation(fields: [idusercreateAt], references: [idusuario])
+  createdAt       DateTime  @default(now())
+  iduserupdatedAt Int?
+  updatedAt       DateTime? @updatedAt
+  status          String    @default("A") @db.VarChar(1)
+  statusvisita    String?   @default("A") @db.VarChar(1)
+
+  @@fulltext([descricao])
+  @@map("visita")
 }
