@@ -102,6 +102,7 @@ exports.postVisita = async (req, res, next) => {
                 chatid: req.body.visita.chatid,
                 ti: req.body.visita.ti,
                 contratost: req.body.visita.contratost,
+                
             },
         });
         await prisma.$disconnect()
