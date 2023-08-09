@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client')
 
+//comentario de teste
+
 const prisma = new PrismaClient()
 
 // Exclude keys from user
